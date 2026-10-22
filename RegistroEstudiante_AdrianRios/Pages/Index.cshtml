@@ -1,0 +1,84 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Registro C# a SQL";
+}
+
+<h1>Registrar Nuevo Estudiante</h1>
+
+<form method="post">
+    <label for="Nombre">Nombre:</label>
+    <input type="text" id="Nombre" name="nombreForm" required />
+
+    <label for="Apellido">Apellido:</label>
+    <input type="text" id="Apellido" name="apellidoForm" required />
+
+    <button type="submit">Guardar en Base de Datos</button>
+</form>
+
+<hr />
+
+<h3>@Model.MensajeSistema</h3>
+
+<hr />
+
+@if (!String.IsNullOrEmpty(Model.MensajeSistema))
+{
+    if (@Model.MensajeSistema.Contains("ERROR") || @Model.MensajeSistema.Contains("FALLA"))
+    {
+        <p style="color: red;">@Model.MensajeSistema</p>
+    }
+    else
+    {
+        <p style="color: green;">@Model.MensajeSistema</p>
+    }
+}
+<h3>Listado de Estudiantes</h3>
+
+<form method="post">
+    <button type="submit" name="accion" value="vaciar_tabla">Vaciar Tabla</button>
+
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.ListaEstudiantes.Count > 0)
+        {
+            foreach (var alumno in Model.ListaEstudiantes)
+            {
+                <tr>
+                    <td>@alumno.ID</td>
+                    <td>@alumno.Nombre</td>
+                    <td>@alumno.Apellido</td>
+                    <td>
+                        <!-- Cada fila tiene su propio formulario de borrado -->
+                        <form method="post">
+                            <!-- Input oculto para enviar el ID a borrar sin que el usuario lo tenga que escribir -->
+                            <input type="hidden" name="estudianteId" value="@alumno.ID" />
+
+                            <button type="submit" name="accion" value="borrar_individual"
+                                    onclick="return confirm('¿Seguro que deseas borrar a @alumno.Nombre @alumno.Apellido?');"
+                                    style="color: red; cursor: pointer;">
+                                Eliminar Registro
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" style="text-align: center;">No hay estudiantes registrados aún.</td>
+            </tr>
+        }
+    </tbody>
+</table>
